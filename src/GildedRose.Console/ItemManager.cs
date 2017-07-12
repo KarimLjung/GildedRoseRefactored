@@ -13,15 +13,37 @@ namespace GildedRose.Console
     public class ItemManager
     {
         private IList<Item> items;
+        private Dictionary<Item, int> itemsToDecrease;
 
         public ItemManager()
         {
             InitializeItems();
+            InitializeDictionary();
         }
 
+        /// <summary>
+        /// Initializes a dictionary that contains items with a
+        /// decrease factor. The decrease factor corresponds to
+        /// the amount of times we should decrease the value of
+        /// an item after each sellin.
+        /// </summary>
+        private void InitializeDictionary()
+        {
+            itemsToDecrease = new Dictionary<Item, int>()
+            {
+                { items[0], 1 },
+                { items[2], 1 },
+                { items[5], 2 }
+            };
+        }
+
+        /// <summary>
+        /// Initializing all items in the item manager.
+        /// </summary>
         public void InitializeItems()
         {
             items = new List<Item>
+
                                           {
                                               new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
                                               new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
@@ -58,39 +80,71 @@ namespace GildedRose.Console
             foreach (var item in items)
             {
                 // Decrease an item quality if it is not aged brie or Backstage passses.
-                if (item.Name != "Aged Brie" && item.Name != "Backstage passes to a TAFKAL80ETC concert")
+                if (IsItemToDecrease(item))
                 {
-                    DecrementItemQuality(item);
+                    DecreaseItemQuality(item);
                 }
                 else
                 {
-                    IncrementItemQuality(item);
-
-                    if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
-                    {
-                        if (item.SellIn < 11)
-                        {
-                            IncrementItemQuality(item);
-                        }
-
-                        if (item.SellIn < 6)
-                        {
-                            IncrementItemQuality(item);
-                        }
-                    }
+                    IncreaseItemValue(item);
                 }
+
                 DecrementItemSellIn(item);
-
-                if(item.Name == "Conjured Mana Cake")
-                {
-                    DecrementItemQuality(item);
-                }
 
                 // In this case aged brie increases in quality but all other items do not.
                 if (IsItemBelowSellIn(item))
                 {
                     UpdateItemQualityAfterSellIn(item);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Increase item value for an item. For a Backstage passes item
+        /// the increase factor gets larger when approaching zero for the
+        /// value of SellIn.
+        /// </summary>
+        /// <param name="item"></param>
+        private void IncreaseItemValue(Item item)
+        {
+            IncrementItemQuality(item);
+
+            if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
+            {
+                if (item.SellIn < 11)
+                {
+                    IncrementItemQuality(item);
+                }
+
+                if (item.SellIn < 6)
+                {
+                    IncrementItemQuality(item);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if the item is a type of item that can be decreased.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private bool IsItemToDecrease(Item item)
+        {
+            return itemsToDecrease.ContainsKey(item);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item"></param>
+        private void DecreaseItemQuality(Item item)
+        {
+            int decreaseFactor = 1;
+            itemsToDecrease.TryGetValue(item, out decreaseFactor);
+
+            for (int i = 0; i < decreaseFactor; i++)
+            {
+                DecrementItemQuality(item);
             }
         }
 

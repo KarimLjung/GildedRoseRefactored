@@ -81,6 +81,11 @@ namespace GildedRose.Console
                 }
                 DecrementItemSellIn(item);
 
+                if(item.Name == "Conjured Mana Cake")
+                {
+                    DecrementItemQuality(item);
+                }
+
                 // In this case aged brie increases in quality but all other items do not.
                 if (IsItemBelowSellIn(item))
                 {

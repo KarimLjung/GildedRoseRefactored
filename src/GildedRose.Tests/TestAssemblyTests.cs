@@ -1,6 +1,7 @@
 using GildedRose.Console;
 using System.Collections.Generic;
 using Xunit;
+using System;
 
 namespace GildedRose.Tests
 {
@@ -16,6 +17,38 @@ namespace GildedRose.Tests
             Given_A_List_Of_Items();
             When_Items_Are_Updated_N_Times(15);
             Then_Backstage_Passes_Quality_Is_Zero();
+        }
+
+         [Fact]
+        public void ConjuringItemQualityZeroTest()
+        {
+            Given_A_Clone_Of_ItemManager();
+            Given_A_List_Of_Items();
+            When_Items_Are_Updated_N_Times(3);
+            Then_Conjuring_Items_Are_Zero();
+        }
+
+        [Fact]
+        public void ConjuringItemQualityFourTest()
+        {
+            Given_A_Clone_Of_ItemManager();
+            Given_A_List_Of_Items();
+            When_Items_Are_Updated_N_Times(1);
+            Then_Conjuring_Items_Are_Four();
+        }
+
+        private void Then_Conjuring_Items_Are_Four()
+        {
+            Assert.Equal("Conjured Mana Cake", items[5].Name);
+            Assert.Equal(2, items[5].SellIn);
+            Assert.Equal(4, items[5].Quality);
+        }
+
+        private void Then_Conjuring_Items_Are_Zero()
+        {
+            Assert.Equal("Conjured Mana Cake", items[5].Name);
+            Assert.Equal(0, items[5].SellIn);
+            Assert.Equal(0, items[5].Quality);
         }
 
         private void When_Items_Are_Updated_N_Times(int n)
@@ -230,10 +263,8 @@ namespace GildedRose.Tests
             Assert.Equal(21, items[4].Quality);
             Assert.Equal(14, items[4].SellIn);
 
-
-            //TODO: Must decrease in value faster!
             Assert.Equal("Conjured Mana Cake", items[5].Name);
-            Assert.Equal(5, items[5].Quality);
+            Assert.Equal(4, items[5].Quality);
             Assert.Equal(2, items[5].SellIn);
         }
 

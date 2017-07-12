@@ -8,7 +8,7 @@ namespace GildedRose.Console
 {
     public class ItemManager
     {
-        IList<Item> Items;
+        private IList<Item> items;
 
         public ItemManager()
         {
@@ -17,7 +17,7 @@ namespace GildedRose.Console
 
         public void InitializeItems()
         {
-            Items = new List<Item>
+            items = new List<Item>
                                           {
                                               new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
                                               new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
@@ -35,64 +35,77 @@ namespace GildedRose.Console
 
         public IList<Item> GetItems()
         {
-            return Items;
+            return items;
         }
         public void UpdateQuality()
         {
-            for (var i = 0; i < Items.Count; i++)
+
+            foreach (var item in items)
             {
                 // Decrease an item quality if it is not aged brie or Backstage passses.
-                if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
+                if (item.Name != "Aged Brie" && item.Name != "Backstage passes to a TAFKAL80ETC concert")
                 {
-                    DecreaseItemQuality(Items[i]);
+                    DecrementItemQuality(item);
                 }
                 else
                 {
-                    IncreaseItemQuality(Items[i]);
+                    IncrementItemQuality(item);
 
-                    if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
+                    if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
                     {
-                        if (Items[i].SellIn < 11)
+                        if (item.SellIn < 11)
                         {
-                            IncreaseItemQuality(Items[i]);
+                            IncrementItemQuality(item);
                         }
 
-                        if (Items[i].SellIn < 6)
+                        if (item.SellIn < 6)
                         {
-                            IncreaseItemQuality(Items[i]);
+                            IncrementItemQuality(item);
                         }
                     }
                 }
-                UpdateSellInForItem(Items[i]);
+                DecrementSellInForItem(item);
 
-                if (Items[i].SellIn < 0)
+                // In this case aged brie increases in quality but all other items do not.
+                if (IsItemBelowSellIn(item))
                 {
-                    if (Items[i].Name != "Aged Brie")
-                    {
-                        if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            if (Items[i].Quality > 0)
-                            {
-                                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                                {
-                                    Items[i].Quality = Items[i].Quality - 1;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Items[i].Quality = Items[i].Quality - Items[i].Quality;
-                        }
-                    }
-                    else
-                    {
-                        IncreaseItemQuality(Items[i]);
-                    }
+                    UpdateItemAfterSellIn(item);
                 }
             }
         }
 
-        private void DecreaseItemQuality(Item item)
+        private void UpdateItemAfterSellIn(Item item)
+        {
+            if (item.SellIn < 0)
+            {
+                switch (item.Name)
+                {
+                    case "Aged Brie":
+                        IncrementItemQuality(item);
+                        break;
+                    case "Backstage passes to a TAFKAL80ETC concert":
+                        ClearItemQuality(item);
+                        break;
+                    case "Sulfuras, Hand of Ragnaros":
+                        break;
+                    default:
+                        DecrementItemQuality(item);
+                        break;
+                }
+            }
+        }
+
+        private bool IsItemBelowSellIn(Item item)
+        {
+            return (item.SellIn < 0 ? true : false);
+        }
+
+        private void ClearItemQuality(Item item)
+        {
+            item.Quality = 0;
+        }
+
+        private void DecrementItemQuality(Item item)
         {
             if (item.Quality > 0)
             {
@@ -103,7 +116,7 @@ namespace GildedRose.Console
             }
         }
 
-        private void IncreaseItemQuality(Item item)
+        private void IncrementItemQuality(Item item)
         {
             if (item.Quality < 50)
             {
@@ -111,7 +124,7 @@ namespace GildedRose.Console
             }
         }
 
-        private void UpdateSellInForItem(Item item)
+        private void DecrementSellInForItem(Item item)
         {
             if (item.Name != "Sulfuras, Hand of Ragnaros")
             {

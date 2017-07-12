@@ -43,7 +43,6 @@ namespace GildedRose.Console
         public void InitializeItems()
         {
             items = new List<Item>
-
                                           {
                                               new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
                                               new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
@@ -76,7 +75,6 @@ namespace GildedRose.Console
         /// </summary>
         public void UpdateQuality()
         {
-
             foreach (var item in items)
             {
                 // Decrease an item quality if it is not aged brie or Backstage passses.
@@ -88,10 +86,10 @@ namespace GildedRose.Console
                 {
                     IncreaseItemValue(item);
                 }
-
                 DecrementItemSellIn(item);
 
-                // In this case aged brie increases in quality but all other items do not.
+                // In this case Aged Brie increases in quality and Backstage passes might increase.
+                // in quality.
                 if (IsItemBelowSellIn(item))
                 {
                     UpdateItemQualityAfterSellIn(item);
@@ -109,6 +107,7 @@ namespace GildedRose.Console
         {
             IncrementItemQuality(item);
 
+            // Handle special case for Backstage passes.
             if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
             {
                 if (item.SellIn < 11)
@@ -151,6 +150,11 @@ namespace GildedRose.Console
         /// <summary>
         /// Increases or decreases an item faster than before
         /// because the SellIn value is less than zero.
+        /// This is where items have special cases when the
+        /// SellIn value is less than zero.
+        /// 
+        /// The default case is that items decrease by 1
+        /// for every day.
         /// </summary>
         /// <param name="item"></param>
         private void UpdateItemQualityAfterSellIn(Item item)

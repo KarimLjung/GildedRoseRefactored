@@ -133,7 +133,9 @@ namespace GildedRose.Console
         }
 
         /// <summary>
-        /// 
+        /// Decreases the quality of an item based on
+        /// the decreaseFactor of an item in the
+        /// itemsToDecrease dictionary.
         /// </summary>
         /// <param name="item"></param>
         private void DecreaseItemQuality(Item item)

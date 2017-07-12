@@ -131,8 +131,6 @@ namespace GildedRose.Tests
 
         private void Then_Items_Are_Valid_After_Twenty_Updates()
         {
-            // After update.
-
             Assert.Equal("+5 Dexterity Vest", items[0].Name);
             Assert.Equal(0, items[0].Quality);
             Assert.Equal(-10, items[0].SellIn);
@@ -153,8 +151,6 @@ namespace GildedRose.Tests
             Assert.Equal(0, items[4].Quality);
             Assert.Equal(-5, items[4].SellIn);
 
-
-            //TODO: Must decrease in value faster!
             Assert.Equal("Conjured Mana Cake", items[5].Name);
             Assert.Equal(0, items[5].Quality);
             Assert.Equal(-17, items[5].SellIn);
@@ -187,9 +183,21 @@ namespace GildedRose.Tests
             Then_Aged_Brie_Is_Max_Quality_50();
         }
 
-        private void Then_BackStage_Passes_Are_Max_Quality_50()
+        [Fact]
+        public void Test_BackStage_Passes_Are_Max_Quality_50()
         {
+            Given_A_Clone_Of_ItemManager();
+            Given_A_List_Of_Items();
+            When_Items_Are_Updated_N_Times(15);
+            Then_Backstage_Passes_Quality_Is_50();
 
+        }
+
+        private void Then_Backstage_Passes_Quality_Is_50()
+        {
+            Assert.Equal("Backstage passes to a TAFKAL80ETC concert", items[4].Name);
+            Assert.Equal(50, items[4].Quality);
+            Assert.Equal(0, items[4].SellIn);
         }
 
         private void Then_Aged_Brie_Is_Max_Quality_50()
@@ -222,8 +230,8 @@ namespace GildedRose.Tests
             Assert.Equal(80, items[3].Quality);
             Assert.Equal(0, items[3].SellIn);
 
-            ////Initial condition for item Sulfuras, Hand of Ragnaros.
-            //Assert.Equal("Backstage passes to a TAFKAL80ETC concert", items[4].Name);
+            ////Initial condition for item Backstage passes to a TAFKAL80ETC concert.
+            Assert.Equal("Backstage passes to a TAFKAL80ETC concert", items[4].Name);
             Assert.Equal(0, items[4].Quality);
             Assert.Equal(-6, items[4].SellIn);
 
